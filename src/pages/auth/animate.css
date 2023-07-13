@@ -1,0 +1,31 @@
+@keyframes slide-up {
+    0% {
+        transform: translateY(100px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}
+
+@keyframes slide-down {
+    0% {
+        transform: translateY(-100px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}
+
+.animate-slide-up-keyframes {
+    animation-name: slide-up;
+    animation-duration: 0.5s;
+    animation-timing-function: ease;
+}
+
+.animate-slide-down-keyframes {
+    animation-name: slide-down;
+    animation-duration: 0.5s;
+    animation-timing-function: ease;
+}

@@ -1,0 +1,47 @@
+.slider-item {
+    opacity: 0;
+    transition: all 1s ease-in-out;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.slider-item.active {
+    opacity: 1;
+}
+
+@keyframes slide-up {
+    0% {
+        visibility: visible;
+        top: 23rem;
+    }
+
+    100% {
+        visibility: visible;
+        top: 17rem;
+    }
+}
+
+@keyframes slide-right {
+    0% {
+        visibility: visible;
+        right: 23rem;
+    }
+
+    100% {
+        visibility: visible;
+        right: 17rem;
+    }
+}
+
+.animate-slide-up-keyframes {
+    animation-name: slide-up;
+    animation-duration: 0.8s;
+    animation-timing-function: ease-in-out;
+}
+
+.animate-slide-right-keyframes {
+    animation-name: slide-right;
+    animation-duration: 0.8s;
+    animation-timing-function: ease-in-out;
+}
