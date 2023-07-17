@@ -44,9 +44,11 @@ function Product() {
     const { dataFirebase, price, setPrice, minPrice, setMinPrice, maxPrice, setMaxPrice } = useContext(StateContext)
 
     const handleChange = (e) => {
-        setPrice(e.target.value)
+        setPrice(parseInt(e.target.value))
 
-        setMinPrice(Math.min(...dataFirebase.map(item => item.harga)))
+        const dataMinPrice = Math.min(...dataFirebase.map(item => item.harga))
+        setMinPrice(dataMinPrice)
+
         setMaxPrice(Math.max(...dataFirebase.map(item => item.harga)))
     }
 

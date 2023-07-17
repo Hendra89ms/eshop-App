@@ -4,13 +4,6 @@ import { readData } from '../service/service_firebase'
 // buat context global
 export const StateContext = createContext()
 
-
-const initialState = {
-    price: 0,
-    minPrice: '',
-    maxPrice: ''
-}
-
 // Buat komponen provider untuk menyediakan state global
 export const StateProvider = ({ children }) => {
 
