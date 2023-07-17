@@ -1,11 +1,14 @@
 import React, { useState } from 'react'
 import { createData } from '../service/service_firebase'
+import InputNumber from './InputNumber'
 
 function InputToFIrebase() {
 
     const [name, setName] = useState('')
     const [harga, setHarga] = useState(0)
     const [url, setUrl] = useState('')
+    const [type, setType] = useState('')
+    const [brand, setBrand] = useState('')
     const [isOnfocus, setIsOnfocus] = useState(false)
 
     const handleFocus = () => {
@@ -24,7 +27,7 @@ function InputToFIrebase() {
         }
 
         const data = {
-            name, harga, url
+            name, harga, url, type, brand
         }
 
         try {
@@ -46,7 +49,7 @@ function InputToFIrebase() {
         <div className='h-screen flex justify-center items-center'>
             <form
                 onSubmit={handleSubmit}
-                className='md:w-[400px] w-[350px] shadow-md p-4 rounded-md animate-slide-up duration-500 z-[90]'>
+                className='md:w-[400px] w-[350px] shadow-md p-6 rounded-md animate-slide-up duration-500 z-[90]'>
 
                 <h1 className='text-center text-3xl mb-6 text-[orangered] font-semibold'>InputToFIrebase</h1>
 
@@ -66,12 +69,11 @@ function InputToFIrebase() {
                     ) : ""}
 
                     <div className=' w-full'>
-                        <input
-                            type='number'
+                        <InputNumber
                             value={harga}
-                            onChange={(e) => setHarga(e.target.value)}
-                            className='border-[1.5px] border-[#3333] outline-none p-2 rounded-md w-full'
+                            setValue={setHarga}
                         />
+
                         {harga.length === 0 ? (
                             <div className='text-red-500 text-sm'>You must input Data</div>
                         ) : ""}
@@ -86,6 +88,38 @@ function InputToFIrebase() {
                             className='border-[1.5px] border-[#3333] outline-none p-2 rounded-md w-full'
                         />
                     </div>
+
+                    <div >
+                        <h1 className='text-slate-400'>Type</h1>
+                        <select
+                            value={type}
+                            onChange={e => setType(e.target.value)}
+                            className='border-[1.5px] border-[#3333] outline-none p-2 rounded-md w-full cursor-pointer'>
+                            <option value="laptop">laptop</option>
+                            <option value="phone">phone</option>
+                            <option value="electronics">electronics</option>
+                            <option value="fashion">fashion</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <h1 className='text-slate-400'>Brand</h1>
+                        <select
+                            value={brand}
+                            onChange={e => setBrand(e.target.value)}
+                            className='border-[1.5px] border-[#3333] outline-none p-2 rounded-md w-full cursor-pointer'>
+
+                            <option value="lenovo">Lenovo</option>
+                            <option value="hp">Hp</option>
+                            <option value="samsung">Samsung</option>
+                            <option value="oppo">oppo</option>
+                            <option value="techno">techno</option>
+                            <option value="fashion">fashion</option>
+                            <option value="electronics">electronics</option>
+                        </select>
+                    </div>
+
+
 
                     <button type='submit' className='bg-[#1f93ff] text-white p-1.5 rounded-md hover:bg-[#167dde] duration-300 '>Submit</button>
                 </div>

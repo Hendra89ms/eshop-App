@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import Card_Product from '../product_list/Card_Product'
 import { readData } from '../../../service/service_firebase';
 
-function Product_Electonics() {
+function SelectTechno() {
 
     const [dataFirebase, setDataFirebase] = useState([])
     const [currentPage, setCurrentPage] = useState(1);
@@ -27,10 +27,10 @@ function Product_Electonics() {
                     // return data nya
                     return data;
                 })
-                // FILTER DATA 
-                const filterLaptop = datas.filter(item => item.type === 'electronics')
-
                 // SET DATA UNTUK DIMAPPING
+                console.log('datas : ', datas)
+                const filterLaptop = datas.filter(item => item.brand === 'techno')
+
                 setDataFirebase(filterLaptop)
 
             }
@@ -119,4 +119,4 @@ function Product_Electonics() {
     )
 }
 
-export default Product_Electonics;
+export default SelectTechno

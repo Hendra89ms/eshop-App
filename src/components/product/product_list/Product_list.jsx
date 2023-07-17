@@ -1,65 +1,62 @@
 import React, { useState, useEffect } from 'react'
 import Card_Product from './Card_Product';
-import { paginationData } from '../../../service/service_firebase'
+
+import { useContext } from 'react'
+import { StateContext } from '../../../store/stateContext'
 
 
 function Product_list() {
 
-    const [dataFirebase, setDataFirebase] = useState([])
-    const [lastDocument, setLastDocument] = useState(null);
+    // GLOBAL STATE
+    const { dataPrice } = useContext(StateContext)
     const [currentPage, setCurrentPage] = useState(1);
-    const pageSize = 10;
+    const itemsPerPage = 10;
+    const totalPages = Math.ceil(dataPrice.length / itemsPerPage);
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = dataPrice.slice(indexOfFirstItem, indexOfLastItem);
 
-    useEffect(() => {
-        readDataFirebase()
-    }, [currentPage])
-
-    const readDataFirebase = async () => {
-        try {
-            const response = await paginationData(pageSize, lastDocument)
-
-            if (response) {
-                const datas = response.docs.map(item => {
-                    // BUAT JADI OBJECT DATA DARI FIREBASE
-                    let data = { ...item.data(), id: item.id }
-                    // return data nya
-                    return data;
-                })
-                // SET DATA UNTUK DIMAPPING
-                setDataFirebase(datas)
-
-                // Set lastDocument jika ada data tersisa
-                if (datas.length > 0) {
-                    const lastDoc = response.docs[response.docs.length - 1];
-                    const lastDocData = lastDoc.data();
-                    setLastDocument(lastDocData);
-                }
-
-            }
-        } catch (error) {
-            console.error(error)
-        }
-    }
 
     const handleNextPage = () => {
+
         setCurrentPage((prevPage) => prevPage + 1);
+
     };
 
     const handlePreviousPage = () => {
-        if (currentPage > 1) {
-            setCurrentPage((prevPage) => prevPage - 1);
-        }
+        setCurrentPage((prevPage) => prevPage - 1);
     };
+
+    const handleClick = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
+
+    const renderPagination = () => {
+        const pageNumbers = [];
+        for (let i = 1; i <= totalPages; i++) {
+            pageNumbers.push(
+                <div
+                    key={i}
+                    className={`inline-block px-2 py-1 mx-1 rounded cursor-pointer ${i === currentPage ? "bg-orange-500 text-white" : "bg-gray-200"
+                        }`}
+                    onClick={() => handleClick(i)}
+                >
+                    {i}
+                </div>
+            );
+        }
+        return pageNumbers;
+    };
+
 
     return (
         <div className='w-full '>
-
             <div className='shadow-md '>
                 <div className='w-full flex justify-center items-center mt-5'>
                     <div className='flex flex-wrap gap-6'>
                         {
-                            dataFirebase.length === 0 ? <div >Loading...</div> :
-                                dataFirebase.map(item => {
+                            currentItems.length === 0 ? <div >Loading...</div> :
+                                currentItems.map(item => {
 
                                     return (
                                         <Card_Product
@@ -79,12 +76,22 @@ function Product_list() {
             <div className='flex justify-center items-center mt-4'>
                 <div className='flex gap-3'>
                     <div className='flex border-[1px] border-gray-400'>
-                        <div className='bg-orange-600 text-white px-3 cursor-pointer border-[1px] border-gray-400'>1</div>
-                        <div className='px-3 cursor-pointer border-[1px] border-gray-400'>2</div>
-                        <button className='px-3' onClick={handleNextPage}>Next</button>
+                        <button
+                            disabled={currentPage === 1}
+                            className='px-3 cursor-pointer'
+                            onClick={handlePreviousPage}>Back
+                        </button>
+
+                        {/* <div className='px-3 cursor-pointer border-[1px] border-gray-400'>2</div> */}
+                        <div> {renderPagination()}</div>
+                        <button
+                            className='px-3 cursor-pointer'
+                            onClick={handleNextPage}
+                            disabled={currentPage === totalPages}
+                        >Next</button>
                     </div>
-                    <div className=''>
-                        <h1>Page {currentPage} of 2</h1>
+                    <div className='flex items-center'>
+                        <h1>Page {currentPage} of {totalPages}</h1>
                     </div>
                 </div>
             </div>

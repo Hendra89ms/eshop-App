@@ -12,19 +12,3 @@ export const readData = () => {
 
     return getDocs(queryRef)
 }
-
-export const paginationData = (sizePage, lastDoc) => {
-    // BATASI DATA YANG MUNCUL 
-    let queryRef = query(collectionRef, orderBy('name'), limit(sizePage))
-
-    if (lastDoc) {
-        queryRef = startAfter(queryRef, lastDoc)
-    }
-
-    return getDocs(queryRef)
-}
-
-export const filterLaptop = () => {
-    let queryRef = query(collectionRef, where('laptop', '==', true))
-    return getDocs(queryRef)
-}

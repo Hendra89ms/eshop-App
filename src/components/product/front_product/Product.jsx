@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom'
+import { Outlet, NavLink, useNavigate } from 'react-router-dom'
 import RightTable from './RightTable'
+import { useContext } from 'react'
+import { StateContext } from '../../../store/stateContext'
+import { readData } from '../../../service/service_firebase'
 
 function Product() {
-    const location = useLocation()
     const navigate = useNavigate()
 
     const borderColor = "border-[orangeRed] border-l-4 px-1"
@@ -20,6 +22,33 @@ function Product() {
         }
     }, [])
 
+    const [selectedOption, setSelectedOption] = useState('');
+
+    const handleSelect = (event) => {
+        const selectedPath = event.target.value;
+        setSelectedOption(selectedPath);
+        navigate(selectedPath)
+    };
+
+    const formatToRupiah = (value) => {
+        const formatter = new Intl.NumberFormat('id-ID', {
+            style: 'currency',
+            currency: 'IDR',
+            minimumFractionDigits: 0,
+        });
+        const formattedValue = formatter.format(value);
+        return formattedValue.replace('Rp', '');
+    };
+
+    // GLOBAL STATE
+    const { dataFirebase, price, setPrice, minPrice, setMinPrice, maxPrice, setMaxPrice } = useContext(StateContext)
+
+    const handleChange = (e) => {
+        setPrice(e.target.value)
+
+        setMinPrice(Math.min(...dataFirebase.map(item => item.harga)))
+        setMaxPrice(Math.max(...dataFirebase.map(item => item.harga)))
+    }
 
     return (
         <div id='products' className='w-full md:w-[1000px] mx-auto flex my-20 h-max'>
@@ -82,13 +111,20 @@ function Product() {
                     {/* BRAND */}
                     <div className='mt-3'>
                         <h1 className='text-xl font-semibold'>Brand</h1>
-                        <select className='w-full flex justify-between border-[1px] border-gray-400 cursor-pointer p-1 mt-2 outline-none'>
-                            <option>All</option>
-                            <option>Lenovo</option>
-                            <option>Hp</option>
-                            <option>Samsung</option>
-                            <option>oppo</option>
-                            <option>Techno</option>
+                        <select
+                            value={selectedOption}
+                            onChange={handleSelect}
+                            className='w-full flex justify-between border-[1px] border-gray-400 cursor-pointer p-1 mt-2 outline-none'>
+                            <option value='/'>
+                                All
+                            </option>
+                            <option value='/lenovo'>
+                                Lenovo
+                            </option>
+                            <option value='/hp'>Hp</option>
+                            <option value='/samsung'>Samsung</option>
+                            <option value='/oppo'>oppo</option>
+                            <option value='/techno' >Techno</option>
                         </select>
                     </div>
                     {/*END BRAND */}
@@ -96,10 +132,18 @@ function Product() {
                     {/* PRICE */}
                     <div className='mt-3'>
                         <h1 className='font-semibold text-xl'>Price</h1>
-                        <h2>$5000</h2>
-                        <input type="range" />
+                        <h2>{formatToRupiah(price)}</h2>
+                        <input
+                            value={price}
+                            min={minPrice}
+                            max={maxPrice}
+                            onChange={handleChange}
+                            type="range"
+                            className='w-full cursor-pointer'
+                        />
                     </div>
                     {/* PRICE */}
+
                     <button className='bg-[orangeRed] hover:bg-orange-700 text-white p-2 mt-4 rounded-md duration-300'>Clear Filters</button>
 
                 </aside>
