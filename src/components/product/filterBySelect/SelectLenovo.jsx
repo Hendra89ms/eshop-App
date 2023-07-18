@@ -1,47 +1,19 @@
-import { useState, useEffect } from 'react'
+import { useState, useContext } from 'react'
 import Card_Product from '../product_list/Card_Product'
-import { readData } from '../../../service/service_firebase';
+import { StateContext } from '../../../store/stateContext';
 
 function SelectLenovo() {
 
-    const [dataFirebase, setDataFirebase] = useState([])
+    const { dataLenovo } = useContext(StateContext)
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
-    const totalPages = Math.ceil(dataFirebase.length / itemsPerPage);
+    const totalPages = Math.ceil(dataLenovo.length / itemsPerPage);
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = dataFirebase.slice(indexOfFirstItem, indexOfLastItem);
-
-    useEffect(() => {
-        readDataFirebase()
-    }, [currentPage])
-
-    const readDataFirebase = async () => {
-        try {
-            const response = await readData()
-
-            if (response) {
-                const datas = response.docs.map(item => {
-                    // BUAT JADI OBJECT DATA DARI FIREBASE
-                    let data = { ...item.data(), id: item.id }
-                    // return data nya
-                    return data;
-                })
-                // SET DATA UNTUK DIMAPPING
-                console.log('datas : ', datas)
-                const filterLaptop = datas.filter(item => item.brand === 'lenovo')
-
-                setDataFirebase(filterLaptop)
-
-            }
-        } catch (error) {
-            console.error(error)
-        }
-    }
+    const currentItems = dataLenovo.slice(indexOfFirstItem, indexOfLastItem);
 
     const handleNextPage = () => {
         setCurrentPage((prevPage) => prevPage + 1);
-
     };
 
     const handlePreviousPage = () => {

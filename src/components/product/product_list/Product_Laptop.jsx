@@ -1,47 +1,22 @@
 import { useState, useEffect } from 'react'
 import Card_Product from '../product_list/Card_Product'
 import { readData } from '../../../service/service_firebase';
+import { useContext } from 'react'
+import { StateContext } from '../../../store/stateContext'
 
 function Product_Laptop() {
 
-    const [dataFirebase, setDataFirebase] = useState([])
+    const { dataLaptop } = useContext(StateContext)
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
-    const totalPages = Math.ceil(dataFirebase.length / itemsPerPage);
+    const totalPages = Math.ceil(dataLaptop.length / itemsPerPage);
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = dataFirebase.slice(indexOfFirstItem, indexOfLastItem);
+    const currentItems = dataLaptop.slice(indexOfFirstItem, indexOfLastItem);
 
-    useEffect(() => {
-        readDataFirebase()
-    }, [currentPage])
-
-    const readDataFirebase = async () => {
-        try {
-            const response = await readData()
-
-            if (response) {
-                const datas = response.docs.map(item => {
-                    // BUAT JADI OBJECT DATA DARI FIREBASE
-                    let data = { ...item.data(), id: item.id }
-                    // return data nya
-                    return data;
-                })
-                // FILTER DATA 
-                const filterLaptop = datas.filter(item => item.type === 'laptop')
-
-                // SET DATA UNTUK DIMAPPING
-                setDataFirebase(filterLaptop)
-
-            }
-        } catch (error) {
-            console.error(error)
-        }
-    }
 
     const handleNextPage = () => {
         setCurrentPage((prevPage) => prevPage + 1);
-
     };
 
     const handlePreviousPage = () => {
