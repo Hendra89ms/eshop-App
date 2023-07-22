@@ -14,7 +14,7 @@ export const StateProvider = ({ children }) => {
 
     const [currentPage, setCurrentPage] = useState(1);
     const [priceRange, setPriceRange] = useState({ min: 0, max: 0 });
-    const [selectNav, setSelectNav] = useState('')
+    const [selectNav, setSelectNav] = useState('all')
 
     useEffect(() => {
         readDataFirebase();
