@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react'
 import Card_Product from './Card_Product';
 
 import { useContext } from 'react'
@@ -8,46 +7,7 @@ import { StateContext } from '../../../store/stateContext'
 function Product_list() {
 
     // GLOBAL STATE
-    const { dataPrice } = useContext(StateContext)
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 10;
-    const totalPages = Math.ceil(dataPrice.length / itemsPerPage);
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = dataPrice.slice(indexOfFirstItem, indexOfLastItem);
-
-
-    const handleNextPage = () => {
-
-        setCurrentPage((prevPage) => prevPage + 1);
-
-    };
-
-    const handlePreviousPage = () => {
-        setCurrentPage((prevPage) => prevPage - 1);
-    };
-
-    const handleClick = (pageNumber) => {
-        setCurrentPage(pageNumber);
-    };
-
-    const renderPagination = () => {
-        const pageNumbers = [];
-        for (let i = 1; i <= totalPages; i++) {
-            pageNumbers.push(
-                <div
-                    key={i}
-                    className={`inline-block px-2 py-1 mx-1 rounded cursor-pointer ${i === currentPage ? "bg-orange-500 text-white" : "bg-gray-200"
-                        }`}
-                    onClick={() => handleClick(i)}
-                >
-                    {i}
-                </div>
-            );
-        }
-        return pageNumbers;
-    };
-
+    const { currentItems, handleNextPage, handlePreviousPage, renderPagination, currentPage, totalPages } = useContext(StateContext)
 
     return (
         <div className='w-full '>
@@ -68,7 +28,6 @@ function Product_list() {
                                     )
                                 })
                         }
-
                     </div>
                 </div>
             </div>
@@ -95,7 +54,7 @@ function Product_list() {
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     )
 }
 

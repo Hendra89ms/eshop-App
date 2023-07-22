@@ -1,34 +1,9 @@
-import React, { useEffect, useState } from 'react'
-import { Outlet, NavLink, useNavigate } from 'react-router-dom'
 import RightTable from './RightTable'
+import { Product_list } from '../product_list';
 import { useContext } from 'react'
 import { StateContext } from '../../../store/stateContext'
-import { readData } from '../../../service/service_firebase'
 
 function Product() {
-    const navigate = useNavigate()
-
-    const borderColor = "border-[orangeRed] border-l-4 px-1"
-
-    const [activeLink, setActiveLink] = useState('/')
-
-    const handleNavLinkClick = (path) => {
-        setActiveLink(path);
-    };
-
-    useEffect(() => {
-        if (activeLink === '/') {
-            navigate('/')
-        }
-    }, [])
-
-    const [selectedOption, setSelectedOption] = useState('');
-
-    const handleSelect = (event) => {
-        const selectedPath = event.target.value;
-        setSelectedOption(selectedPath);
-        navigate(selectedPath)
-    };
 
     const formatToRupiah = (value) => {
         const formatter = new Intl.NumberFormat('id-ID', {
@@ -41,16 +16,34 @@ function Product() {
     };
 
     // GLOBAL STATE
-    const { dataFirebase, price, setPrice, minPrice, setMinPrice, maxPrice, setMaxPrice } = useContext(StateContext)
+    const { filterHarga, handleFilterHargaChange, handleTypeFilter, handleResetFilters, selectNav, setSelectNav, handleFilterBrand, filterBrand } = useContext(StateContext)
 
-    const handleChange = (e) => {
-        setPrice(parseInt(e.target.value))
 
-        const dataMinPrice = Math.min(...dataFirebase.map(item => item.harga))
-        setMinPrice(dataMinPrice)
+    const handleFilterSelect = (border) => {
+        if (border === 'phone') {
+            setSelectNav('phone')
+            handleTypeFilter('phone')
+        }
+        if (border === 'laptop') {
+            setSelectNav('laptop')
+            handleTypeFilter('laptop')
+        }
+        if (border === 'electronics') {
+            setSelectNav('electronics')
+            handleTypeFilter('electronics')
+        }
+        if (border === 'fashion') {
+            setSelectNav('fashion')
+            handleTypeFilter('fashion')
+        }
+        if (border === 'all') {
+            setSelectNav('all')
+            handleTypeFilter('')
+        }
 
-        setMaxPrice(Math.max(...dataFirebase.map(item => item.harga)))
     }
+
+    const borderColor = "border-[orangeRed] border-l-4 px-1"
 
     return (
         <div id='products' className='w-full md:w-[1000px] mx-auto flex my-20 h-max'>
@@ -64,48 +57,45 @@ function Product() {
 
                     <div className='flex flex-col gap-2 mt-3'>
 
-                        <NavLink
-                            to='/'
-                            onClick={() => handleNavLinkClick('/')}
-                            className={activeLink === '/' ? borderColor : ""}>
-
+                        <div
+                            onClick={() => handleFilterSelect('all')}
+                            // onChange={() => handleFilterClick('all')}
+                            className={`${selectNav === "all" && borderColor} cursor-pointer`}>
                             <h1>&#8250; All</h1>
-
-                        </NavLink>
+                        </div>
 
                         <hr />
 
-                        <NavLink
-                            to='/laptop'
-                            onClick={() => handleNavLinkClick('/laptop')}
-                            className={activeLink === '/laptop' ? borderColor : ""}>
+                        <div
+                            onClick={() => handleFilterSelect('laptop')}
+                            className={`${selectNav === "laptop" && borderColor} cursor-pointer`}
+                        >
                             <h1> &#8250; Laptop</h1>
                             <hr />
-                        </NavLink>
+                        </div>
 
-                        <NavLink
-                            to='/electronics'
-                            onClick={() => handleNavLinkClick('/electronics')}
-                            className={activeLink === '/electronics' ? borderColor : ""}>
+                        <div
+                            onClick={() => handleFilterSelect('electronics')}
+                            className={`${selectNav === "electronics" && borderColor} cursor-pointer`}
+                        >
+
                             <h1 > &#8250; Electronics</h1>
                             <hr />
-                        </NavLink>
+                        </div>
 
-                        <NavLink
-                            to='/fashion'
-                            onClick={() => handleNavLinkClick('/fashion')}
-                            className={activeLink === '/fashion' ? borderColor : ""}>
+                        <div
+                            onClick={() => handleFilterSelect('fashion')}
+                            className={`${selectNav === "fashion" && borderColor} cursor-pointer`}>
                             <h1> &#8250; Fashion</h1>
                             <hr />
-                        </NavLink>
+                        </div>
 
-                        <NavLink
-                            to='/phone'
-                            onClick={() => handleNavLinkClick('/phone')}
-                            className={activeLink === '/phone' ? borderColor : ""}>
+                        <div
+                            onClick={() => handleFilterSelect('phone')}
+                            className={`${selectNav === "phone" && borderColor} cursor-pointer`}>
                             <h1> &#8250; Phone</h1>
                             <hr />
-                        </NavLink>
+                        </div>
                     </div>
 
                     {/* END CATEGORY */}
@@ -114,19 +104,19 @@ function Product() {
                     <div className='mt-3'>
                         <h1 className='text-xl font-semibold'>Brand</h1>
                         <select
-                            value={selectedOption}
-                            onChange={handleSelect}
+                            value={filterBrand}
+                            onChange={handleFilterBrand}
                             className='w-full flex justify-between border-[1px] border-gray-400 cursor-pointer p-1 mt-2 outline-none'>
-                            <option value='/'>
+                            <option value=''>
                                 All
                             </option>
-                            <option value='/lenovo'>
+                            <option value='lenovo'>
                                 Lenovo
                             </option>
-                            <option value='/hp'>Hp</option>
-                            <option value='/samsung'>Samsung</option>
-                            <option value='/oppo'>oppo</option>
-                            <option value='/techno' >Techno</option>
+                            <option value='hp'>Hp</option>
+                            <option value='samsung'>Samsung</option>
+                            <option value='oppo'>oppo</option>
+                            <option value='techno' >Techno</option>
                         </select>
                     </div>
                     {/*END BRAND */}
@@ -134,19 +124,19 @@ function Product() {
                     {/* PRICE */}
                     <div className='mt-3'>
                         <h1 className='font-semibold text-xl'>Price</h1>
-                        <h2>{formatToRupiah(price)}</h2>
+                        <h2>{formatToRupiah(filterHarga)}</h2>
                         <input
-                            value={price}
-                            min={minPrice}
-                            max={maxPrice}
-                            onChange={handleChange}
+                            value={filterHarga}
+                            min={0}
+                            max={35000000}
+                            onChange={handleFilterHargaChange}
                             type="range"
-                            className='w-full cursor-pointer'
+                            className='w-full cursor-pointer border-none'
                         />
                     </div>
                     {/* PRICE */}
 
-                    <button className='bg-[orangeRed] hover:bg-orange-700 text-white p-2 mt-4 rounded-md duration-300'>Clear Filters</button>
+                    <button onClick={handleResetFilters} className='bg-[orangeRed] hover:bg-orange-700 text-white p-2 mt-4 rounded-md duration-300'>Clear Filters</button>
 
                 </aside>
                 {/* END LEFT CONTAINER */}
@@ -158,8 +148,8 @@ function Product() {
 
                 {/* PRODUCT LISTS */}
                 <div className='' >
-                    <Outlet />
-                    {/* END PRODUCT LISTS */}
+                    <Product_list />
+
                 </div>
             </div>
 
