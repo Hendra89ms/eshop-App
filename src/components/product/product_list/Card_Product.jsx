@@ -32,7 +32,7 @@ function Card_Product({ price, src, name, description }) {
 
             <div className={`${styleGrid ? "mt-6 flex flex-col gap-0.5 items-center w-full" : styleFlex ? "flex flex-col w-full justify-around" : ""}`}>
                 <div className={`${styleGrid ? "flex flex-col w-full text-center" : styleFlex ? "" : ""}`}>
-                    <h1 className='text-[orangeRed]'>Rp {price}</h1>
+                    <h1 className='text-[orangeRed]'>Rp {formatToRupiah(price)}</h1>
                     <p className='truncate w-full font-semibold'>{name}</p>
                     <div className={`${styleGrid ? "hidden" : styleFlex ? "block" : ""}`}>{description}</div>
                 </div>
