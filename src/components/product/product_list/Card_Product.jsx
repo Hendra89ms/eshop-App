@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import { Link } from 'react-router-dom'
 import { StateContext } from '../../../store/stateContext';
 
-function Card_Product({ price, src, name, description }) {
+function Card_Product({ id, price, src, name, description }) {
 
     const { styleGrid, styleFlex } = useContext(StateContext)
 
@@ -20,7 +20,7 @@ function Card_Product({ price, src, name, description }) {
     return (
         <div
             className={`shadow-md ${styleGrid ? "p-4 w-[230px] h-max" : styleFlex ? "w-[750px] flex p-2 gap-8" : ""} `}>
-            <div>
+            <Link to={`/details/${id}`}>
                 <div className='relative'>
                     <img
                         className={`object-cover ${styleGrid ? "h-[220px] w-full" : styleFlex ? "h-[250px] w-[350px]" : ""}`}
@@ -28,7 +28,7 @@ function Card_Product({ price, src, name, description }) {
                         alt={name} />
                     <div className='absolute inset-0 hover:bg-[#3333] transition duration-300'></div>
                 </div>
-            </div>
+            </Link>
 
             <div className={`${styleGrid ? "mt-6 flex flex-col gap-0.5 items-center w-full" : styleFlex ? "flex flex-col w-full justify-around" : ""}`}>
                 <div className={`${styleGrid ? "flex flex-col w-full text-center" : styleFlex ? "" : ""}`}>

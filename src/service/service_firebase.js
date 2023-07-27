@@ -1,4 +1,4 @@
-import { collection, addDoc, getDocs, limit, orderBy, startAfter, query, setDoc, doc } from 'firebase/firestore'
+import { collection, addDoc, getDocs, limit, orderBy, startAfter, query, setDoc, doc, getDoc } from 'firebase/firestore'
 import { db } from '../firebase_config'
 
 const collectionRef = collection(db, 'eshopApp')
@@ -26,13 +26,20 @@ const collectionRef = collection(db, 'eshopApp')
 // // Panggil fungsi untuk mengupdate data dengan properti baru
 // updateDataWithNewProp();
 
-
+// CREATE DATA
 export const createData = (newData) => {
     return addDoc(collectionRef, newData)
 }
 
+// READ DATA 
 export const readData = () => {
     const queryRef = query(collectionRef, orderBy('name'))
 
     return getDocs(queryRef)
+}
+
+// DETAIL DATA
+export const detailData = (id) => {
+    const dataId = doc(db, "eshopApp", id)
+    return getDoc(dataId)
 }

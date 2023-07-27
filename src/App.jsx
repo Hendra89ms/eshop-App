@@ -2,12 +2,11 @@ import React from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { Home, Contact, Login, Register, Reset, NotFound, Admin } from './pages'
 import { InputToFIrebase } from './coba'
-import { Header } from './components'
+import { Header, DetailsProduct } from './components'
 import Coba from './coba/Coba'
 
 import { ToastContainer } from 'react-toastify'
 import { StateProvider } from './store/stateContext'
-import Coba2 from './coba/Coba2'
 
 
 function App() {
@@ -25,14 +24,13 @@ function App() {
             <Route path='/' element={<Home />} />
 
             <Route path='/coba' element={<Coba />} />
-            <Route path='/coba2' element={<Coba2 />} />
 
             <Route path='/contact' element={<Contact />} />
             <Route path='/login' element={<Login />} />
             <Route path='/register' element={<Register />} />
             <Route path='/reset' element={<Reset />} />
+            <Route path='/details/:id' element={<DetailsProduct />} />
             <Route path='/inputTofirebase' element={<InputToFIrebase />} />
-            {/* <Route path='/filterData' element={<FilterData />} /> */}
 
             <Route path='*' element={<NotFound />} />
           </Routes>

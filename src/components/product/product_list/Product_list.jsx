@@ -16,10 +16,11 @@ function Product_list() {
                     <div className='flex flex-wrap gap-6'>
                         {
                             currentItems.length === 0 ? <div >Data Tidak Ditemukan...</div> :
-                                currentItems.map(item => {
+                                currentItems.map((item, index) => {
                                     return (
                                         <Card_Product
-                                            key={item.id}
+                                            key={index}
+                                            id={item.id}
                                             src={item.url}
                                             price={item.harga}
                                             name={item.name}
