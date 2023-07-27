@@ -16,29 +16,29 @@ function Product() {
     };
 
     // GLOBAL STATE
-    const { filterHarga, handleFilterHargaChange, handleTypeFilter, handleResetFilters, selectNav, setSelectNav, handleFilterBrand, filterBrand } = useContext(StateContext)
+    const { filterByCategory, selectNav, setSelectNav, filterBrand, filterByBrand, handleRangeValue, rangeValue, handleResetFilter, loading, dataProducts } = useContext(StateContext)
 
 
     const handleFilterSelect = (border) => {
         if (border === 'phone') {
             setSelectNav('phone')
-            handleTypeFilter('phone')
+            filterByCategory('phone')
         }
         if (border === 'laptop') {
             setSelectNav('laptop')
-            handleTypeFilter('laptop')
+            filterByCategory('laptop')
         }
         if (border === 'electronics') {
             setSelectNav('electronics')
-            handleTypeFilter('electronics')
+            filterByCategory('electronics')
         }
         if (border === 'fashion') {
             setSelectNav('fashion')
-            handleTypeFilter('fashion')
+            filterByCategory('fashion')
         }
         if (border === 'all') {
             setSelectNav('all')
-            handleTypeFilter('')
+            filterByCategory('all')
         }
 
     }
@@ -46,115 +46,119 @@ function Product() {
     const borderColor = "border-[orangeRed] border-l-4 px-1"
 
     return (
-        <div id='products' className='w-full md:w-[1000px] mx-auto flex my-20 h-max'>
-            <div className='flex-[0.2] '>
-                {/* LEFT CONTAINER */}
-                <aside >
+        <>
+            {
+                loading ? <h1>Loading...</h1> :
+                    (
+                        <div id='products' className='w-full md:w-[1000px] mx-auto flex my-20 h-max'>
+                            <div className='flex-[0.2] '>
+                                {/* LEFT CONTAINER */}
+                                <aside >
 
-                    {/* CATEGORY */}
+                                    {/* CATEGORY */}
 
-                    <h1 className='text-xl font-semibold'>Categories</h1>
+                                    <h1 className='text-xl font-semibold'>Categories</h1>
 
-                    <div className='flex flex-col gap-2 mt-3'>
+                                    <div className='flex flex-col gap-2 mt-3'>
 
-                        <div
-                            onClick={() => handleFilterSelect('all')}
-                            // onChange={() => handleFilterClick('all')}
-                            className={`${selectNav === "all" && borderColor} cursor-pointer`}>
-                            <h1>&#8250; All</h1>
+                                        <div
+                                            onClick={() => handleFilterSelect('all')}
+                                            className={`${selectNav === "all" && borderColor} cursor-pointer`}>
+                                            <h1>&#8250; All</h1>
+                                        </div>
+
+                                        <hr />
+
+                                        <div
+                                            onClick={() => handleFilterSelect('laptop')}
+                                            className={`${selectNav === "laptop" && borderColor} cursor-pointer`}
+                                        >
+                                            <h1> &#8250; Laptop</h1>
+                                            <hr />
+                                        </div>
+
+                                        <div
+                                            onClick={() => handleFilterSelect('electronics')}
+                                            className={`${selectNav === "electronics" && borderColor} cursor-pointer`}
+                                        >
+                                            <h1 > &#8250; Electronics</h1>
+                                            <hr />
+                                        </div>
+
+                                        <div
+                                            onClick={() => handleFilterSelect('fashion')}
+                                            className={`${selectNav === "fashion" && borderColor} cursor-pointer`}>
+                                            <h1> &#8250; Fashion</h1>
+                                            <hr />
+                                        </div>
+
+                                        <div
+                                            onClick={() => handleFilterSelect('phone')}
+                                            className={`${selectNav === "phone" && borderColor} cursor-pointer`}>
+                                            <h1> &#8250; Phone</h1>
+                                            <hr />
+                                        </div>
+                                    </div>
+
+                                    {/* END CATEGORY */}
+
+                                    {/* BRAND */}
+                                    <div className='mt-3'>
+                                        <h1 className='text-xl font-semibold'>Brand</h1>
+                                        <select
+                                            value={filterBrand}
+                                            onChange={filterByBrand}
+                                            className='w-full flex justify-between border-[1px] border-gray-400 cursor-pointer p-1 mt-2 outline-none'>
+                                            <option value='all'>
+                                                All
+                                            </option>
+                                            <option value='lenovo'>
+                                                Lenovo
+                                            </option>
+                                            <option value='hp'>Hp</option>
+                                            <option value='samsung'>Samsung</option>
+                                            <option value='oppo'>oppo</option>
+                                            <option value='techno' >Techno</option>
+                                        </select>
+                                    </div>
+                                    {/*END BRAND */}
+
+                                    {/* PRICE */}
+                                    <div className='mt-3'>
+                                        <h1 className='font-semibold text-xl'>Price</h1>
+                                        <h2>{formatToRupiah(rangeValue)}</h2>
+                                        <input
+                                            value={rangeValue}
+                                            min={Math.min(...dataProducts.map(item => item.harga))}
+                                            max={Math.max(...dataProducts.map(item => item.harga))}
+                                            onChange={handleRangeValue}
+                                            type="range"
+                                            className='w-full cursor-pointer border-none'
+                                        />
+                                    </div>
+                                    {/* PRICE */}
+
+                                    <button onClick={handleResetFilter} className='bg-[orangeRed] hover:bg-orange-700 text-white p-2 mt-4 rounded-md duration-300'>Clear Filters</button>
+
+                                </aside>
+                                {/* END LEFT CONTAINER */}
+
+                            </div>
+                            <div className=' flex-col flex-[0.9] flex ml-10 '>
+                                <RightTable />
+
+                                {/* PRODUCT LISTS */}
+                                <div className='' >
+                                    <Product_list />
+
+                                </div>
+                            </div>
+
+
                         </div>
-
-                        <hr />
-
-                        <div
-                            onClick={() => handleFilterSelect('laptop')}
-                            className={`${selectNav === "laptop" && borderColor} cursor-pointer`}
-                        >
-                            <h1> &#8250; Laptop</h1>
-                            <hr />
-                        </div>
-
-                        <div
-                            onClick={() => handleFilterSelect('electronics')}
-                            className={`${selectNav === "electronics" && borderColor} cursor-pointer`}
-                        >
-
-                            <h1 > &#8250; Electronics</h1>
-                            <hr />
-                        </div>
-
-                        <div
-                            onClick={() => handleFilterSelect('fashion')}
-                            className={`${selectNav === "fashion" && borderColor} cursor-pointer`}>
-                            <h1> &#8250; Fashion</h1>
-                            <hr />
-                        </div>
-
-                        <div
-                            onClick={() => handleFilterSelect('phone')}
-                            className={`${selectNav === "phone" && borderColor} cursor-pointer`}>
-                            <h1> &#8250; Phone</h1>
-                            <hr />
-                        </div>
-                    </div>
-
-                    {/* END CATEGORY */}
-
-                    {/* BRAND */}
-                    <div className='mt-3'>
-                        <h1 className='text-xl font-semibold'>Brand</h1>
-                        <select
-                            value={filterBrand}
-                            onChange={handleFilterBrand}
-                            className='w-full flex justify-between border-[1px] border-gray-400 cursor-pointer p-1 mt-2 outline-none'>
-                            <option value=''>
-                                All
-                            </option>
-                            <option value='lenovo'>
-                                Lenovo
-                            </option>
-                            <option value='hp'>Hp</option>
-                            <option value='samsung'>Samsung</option>
-                            <option value='oppo'>oppo</option>
-                            <option value='techno' >Techno</option>
-                        </select>
-                    </div>
-                    {/*END BRAND */}
-
-                    {/* PRICE */}
-                    <div className='mt-3'>
-                        <h1 className='font-semibold text-xl'>Price</h1>
-                        <h2>{formatToRupiah(filterHarga)}</h2>
-                        <input
-                            value={filterHarga}
-                            min={0}
-                            max={35000000}
-                            onChange={handleFilterHargaChange}
-                            type="range"
-                            className='w-full cursor-pointer border-none'
-                        />
-                    </div>
-                    {/* PRICE */}
-
-                    <button onClick={handleResetFilters} className='bg-[orangeRed] hover:bg-orange-700 text-white p-2 mt-4 rounded-md duration-300'>Clear Filters</button>
-
-                </aside>
-                {/* END LEFT CONTAINER */}
-
-
-            </div>
-            <div className=' flex-col flex-[0.9] flex ml-10 '>
-                <RightTable />
-
-                {/* PRODUCT LISTS */}
-                <div className='' >
-                    <Product_list />
-
-                </div>
-            </div>
-
-
-        </div >
+                    )
+            }
+        </>
     )
 }
 

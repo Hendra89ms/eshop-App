@@ -7,7 +7,7 @@ import { StateContext } from '../../../store/stateContext'
 function Product_list() {
 
     // GLOBAL STATE
-    const { currentItems, handleNextPage, handlePreviousPage, renderPagination, currentPage, totalPages } = useContext(StateContext)
+    const { currentItems, currentPage, handlePrevPage, renderPaginationButtons, totalPages, handleNextPage } = useContext(StateContext)
 
     return (
         <div className='w-full '>
@@ -15,15 +15,15 @@ function Product_list() {
                 <div className='w-full flex justify-center items-center mt-5'>
                     <div className='flex flex-wrap gap-6'>
                         {
-                            currentItems.length === 0 ? <div >Loading...</div> :
+                            currentItems.length === 0 ? <div >Data Tidak Ditemukan...</div> :
                                 currentItems.map(item => {
-
                                     return (
                                         <Card_Product
                                             key={item.id}
                                             src={item.url}
                                             price={item.harga}
                                             name={item.name}
+                                            description={item.description}
                                         />
                                     )
                                 })
@@ -38,11 +38,11 @@ function Product_list() {
                         <button
                             disabled={currentPage === 1}
                             className='px-3 cursor-pointer'
-                            onClick={handlePreviousPage}>Back
+                            onClick={handlePrevPage}>Back
                         </button>
 
                         {/* <div className='px-3 cursor-pointer border-[1px] border-gray-400'>2</div> */}
-                        <div> {renderPagination()}</div>
+                        <div> {renderPaginationButtons()}</div>
                         <button
                             className='px-3 cursor-pointer'
                             onClick={handleNextPage}

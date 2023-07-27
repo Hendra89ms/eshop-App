@@ -1,24 +1,18 @@
 import React from 'react'
 
-function CardProduct({ data }) {
+function CardProduct({ name, harga, type, brand, widthSelect }) {
+
 
     return (
         <>
-            {
-                data.length === 0 ? <h1>Loading....</h1>
-                    : data.map((item, index) => {
-                        return (
-                            <div key={index} className='border-[1px] border-black w-[200px] h-[200px]'>
-                                <h1>Name : {item.name} </h1>
-                                <div>Type :  {item.type}</div>
-                                <div>Harga {item.harga}</div>
-                                <hr />
-                                <div>Brand : {item.brand}</div>
-                            </div>
-
-                        )
-                    })
-            }
+            <div
+                className={`w-[200px] p-5 md:w-${widthSelect} border-[1px] border-black h-[200px]`}>
+                <h1>Name : {name} </h1>
+                <div>Type :  {type}</div>
+                <div>Harga : {harga}</div>
+                <hr />
+                <div>Brand : {brand}</div>
+            </div>
         </>
     )
 }

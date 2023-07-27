@@ -1,36 +1,12 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { BsFillGridFill } from "react-icons/bs";
 import { FaListAlt } from "react-icons/fa";
 import Search from '../product_list/Search';
-import { readData } from '../../../service/service_firebase'
+import { StateContext } from '../../../store/stateContext';
 
 function RightTable() {
 
-    const [arrLength, setArrayLength] = useState()
-
-    useEffect(() => {
-        readDataFirebase()
-    }, [])
-
-    const readDataFirebase = async () => {
-        try {
-            const response = await readData()
-
-            if (response) {
-                const datas = response.docs.map(item => {
-                    // BUAT JADI OBJECT DATA DARI FIREBASE
-                    let data = { ...item.data(), id: item.id }
-                    // return data nya
-                    return data;
-                })
-
-                const lengthData = datas.length
-                setArrayLength(lengthData)
-            }
-        } catch (error) {
-            console.error(error)
-        }
-    }
+    const { sortBy, arrLength, filterName, filterByName, sortedValue, handleStyleGrid, handleStyleFlex } = useContext(StateContext)
 
     return (
         <>
@@ -38,11 +14,13 @@ function RightTable() {
 
                 <div className='flex gap-2 items-center '>
                     <BsFillGridFill
+                        onClick={handleStyleGrid}
                         className='cursor-pointer'
                         color="orangered"
                         size={22} />
 
                     <FaListAlt
+                        onClick={handleStyleFlex}
                         className='cursor-pointer'
                         size={24}
                         color="#0066d4" />
@@ -52,16 +30,19 @@ function RightTable() {
                 </div>
 
                 {/* KOMPONENT SEARCH */}
-                <Search />
+                <Search value={filterName} onChange={filterByName} />
                 {/* END KOMPONENT SEARCH */}
 
                 <div>
-                    Sort by : <select className='cursor-pointer border-none outline-none'>
+                    Sort by : <select
+                        onChange={sortBy}
+                        value={sortedValue}
+                        className='cursor-pointer border-none outline-none'>
                         <option value="latest">Latest</option>
-                        <option value="lowest-price">Lowest Price</option>
-                        <option value="highest-price">Highest Price</option>
-                        <option value="a-z">A - Z</option>
-                        <option value="z-a">Z - A</option>
+                        <option value="Lowest Price">Lowest Price</option>
+                        <option value="Highest Price">Highest Price</option>
+                        <option value="A - Z">A - Z</option>
+                        <option value="Z - A">Z - A</option>
                     </select>
                 </div>
             </div>

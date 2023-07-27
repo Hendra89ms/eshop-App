@@ -1,173 +1,100 @@
-import React, { useState, useEffect } from 'react';
-import { readData } from '../service/service_firebase';
-import CardProduct from './Card_Product'
+import React, { useContext, useEffect, useState } from 'react';
+import { StateContext } from '../store/stateContext';
+import { BsFillGridFill } from "react-icons/bs";
+import { FaListAlt } from "react-icons/fa";
 
-const Coba = () => {
+function Coba() {
+    const { dataProducts, readDataFirebase } = useContext(StateContext);
 
+    const [styleGrid, setStyleGrid] = useState(true)
+    const [styleFlex, setStyleFlex] = useState(false)
 
-    const [priceRange, setPriceRange] = useState({ min: 0, max: 0 });
-    const [price, setPrice] = useState('')
-
-    // menangkapa data dari firebase
-    const [allData, setAllData] = useState([])
-
-    // STATE UNTUK MENANGKAP DATA YANG SUDAH DIFILTER
-    const [filteredData, setFilteredData] = useState([])
-
-    // STATE UNTUK FILTER DATA BERDASARKAN CATEGORY DAN BRAND
-    const [category, setCategory] = useState('')
-    const [selectedBrand, setSelectedBrand] = useState('');
-
-    useEffect(() => {
-        readDataFirebase();
-    }, []);
-
-    useEffect(() => {
-        mapAllData();
-    }, [allData]);
-
-    const mapAllData = () => {
-        setFilteredData(allData);
-    };
-
-    const readDataFirebase = async () => {
-        try {
-            const response = await readData();
-            if (response) {
-                const datas = response.docs.map(item => {
-                    let data = { ...item.data(), id: item.id };
-                    return data;
-                });
-                setAllData(datas);
-
-                const maxValue = Math.max(...datas.map(item => item.harga))
-                const minValue = Math.min(...datas.map(item => item.harga))
-                const dataValue = { ...priceRange, min: minValue, max: maxValue }
-                setPriceRange(dataValue)
-
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-
-    // MEMFILTER DATA BERDASARKAN TYPE
-    const handleFilterCategory = (selectedCategory) => {
-        setCategory(selectedCategory)
-
-        if (selectedCategory === 'all') {
-            mapAllData()
-        } else {
-            const dataCategory = allData.filter(item => item.type === selectedCategory);
-            console.log('data Category : ', dataCategory)
-            setFilteredData(dataCategory);
-        }
+    const handleStyleGrid = () => {
+        setStyleGrid(true)
+        setStyleFlex(false)
+    }
+    const handleStyleFlex = () => {
+        setStyleGrid(false)
+        setStyleFlex(true)
     }
 
-    // // MEMFILTER DATA BERDASARKAN BRAND
-    const handleFilterBrand = (selectedBrand) => {
-        setSelectedBrand(selectedBrand);
-
-        if (selectedBrand === 'all') {
-            mapAllData();
-        } else {
-            const dataBrand = allData.filter(item => item.brand === selectedBrand);
-            setFilteredData(dataBrand);
-        }
-    };
-
-    const handleFilterPrice = (e) => {
-        const selectedPrice = parseInt(e.target.value);
-        setPrice(selectedPrice);
-
-        const dataPrice = allData.filter(item => {
-            if (item.type === category) {
-                const dataCategory = item.type === category && item.harga <= price;
-                setCategory(dataCategory)
-            }
-            else if (item.brand === selectedBrand) {
-                return item.brand === selectedBrand && item.harga <= price;
-            }
-            else {
-                return item.harga <= price;
-            }
-        })
-        // console.log('dataPrice : ', dataPrice)
-        setFilteredData(dataPrice)
-    };
-
+    useEffect(() => {
+        readDataFirebase()
+    }, [])
 
     return (
-        <div className='flex w-full md:w-[1024px] h-max mt-24 mx-auto '>
-            <div className='flex flex-col w-full'>
+        <div className='mt-32 mb-10'>
+            <div className='flex gap-2 items-center '>
+                <BsFillGridFill
+                    onClick={handleStyleGrid}
+                    className='cursor-pointer'
+                    color="orangered"
+                    size={22} />
 
-                {/* Filtered by Type Products */}
-                <div className='mt-5'>
-                    <h3>Filtered by type Product:</h3>
-                    <div>==================</div>
-                    <div className='flex gap-4'>
-                        <button
-                            onClick={() => handleFilterCategory('all')}
-                            className='bg-blue-500 p-3 text-white'>All
-                        </button>
-                        <button
-                            onClick={() => handleFilterCategory('laptop')}
-                            className='bg-blue-500 p-3 text-white'>Laptop
-                        </button>
-                        <button
-                            onClick={() => handleFilterCategory('phone')}
-                            className='bg-blue-500 p-3 text-white'>phone
-                        </button>
-                    </div>
-                </div>
+                <FaListAlt
+                    onClick={handleStyleFlex}
+                    className='cursor-pointer'
+                    size={24}
+                    color="#0066d4" />
 
-                {/* Filtered by brand Products */}
-                <div className='mt-5'>
-                    <h3>Filtered by brand Product:</h3>
-                    <div>==================</div>
-                    <select
-                        value={selectedBrand}
-                        onChange={(e) => handleFilterBrand(e.target.value)}
-                        className='px-5 outline-none border-[1px] border-black'>
-                        <option
-                            value="all">All
-                        </option>
-                        <option
-                            value="lenovo">Lenovo
-                        </option>
-                        <option value="samsung">Samsung</option>
-                        <option value="electronics">Electronics</option>
-                    </select>
-                </div>
-
-                {/* Filter by Price */}
-                <div className='mt-5'>
-                    <h3>Filter by Price:</h3>
-                    <h1>=====================</h1>
-                    <h1>Value nya : {price || priceRange.max} </h1>
-                    <input
-                        type="range"
-                        value={price}
-                        min={priceRange.min}
-                        max={priceRange.max}
-                        onChange={handleFilterPrice}
-                    />
-                </div>
-
-                {/* Reset Filter Button */}
-                <button className='bg-red-500 text-white h-[40px] w-[150px] mt-5'>Reset Filter</button>
-
+                <h1 className='font-semibold'>40</h1>
+                <p>Products Found</p>
             </div>
 
-            <div className='my-8'>
-                <div className='flex flex-wrap gap-5 w-[700px] '>
+            {/* Tampilkan hasil data yang telah difilter berdasarkan range harga */}
+            <div className='flex flex-wrap w-[900px] mx-auto gap-5'>
 
-                    <CardProduct data={filteredData} />
+                {
+                    dataProducts.map((item, index) => {
+                        return (
+                            <div key={index}
+                                className={`shadow-md ${styleGrid ? "p-4 w-[230px] h-max" : styleFlex ? "w-[900px] flex p-2 gap-8" : ""} `}>
+                                <div>
+                                    <div className='relative'>
+                                        <img
+                                            className={`object-cover ${styleGrid ? "h-[220px] w-full" : styleFlex ? "h-[250px] w-[350px]" : ""}`}
+                                            src={item.url}
+                                            alt={item.name} />
+                                        <div className='absolute inset-0 hover:bg-[#3333] transition duration-300'></div>
+                                    </div>
+                                </div>
+
+                                <div className={`${styleGrid ? "mt-6 flex flex-col gap-0.5 items-center w-full" : styleFlex ? "flex flex-col w-full justify-around" : ""}`}>
+                                    <div className={`${styleGrid ? "flex flex-col w-full text-center" : styleFlex ? "" : ""}`}>
+                                        <h1 className='text-[orangeRed]'>Rp {item.harga}</h1>
+                                        <p className='truncate w-full'>{item.name}</p>
+                                        <div className={`${styleGrid ? "hidden" : styleFlex ? "block" : ""}`}>{item.description}</div>
+                                    </div>
+                                    <button className={`mt-3 bg-[orangeRed] text-white ${styleGrid ? "w-full" : styleFlex ? "w-[200px]" : ""} rounded-md hover:bg-orange-700 duration-300 ease-in-out h-[35px]`}>Add To Cart</button>
+                                </div>
+                            </div>
+                        )
+                    })
+                }
+
+                <div className='w-[900px] flex p-2 gap-8 shadow-md'>
+                    <div>
+                        <div className='relative'>
+                            <img
+                                className='object-cover h-[250px] w-[350px]'
+                                src='https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcTgXRefNhSKWXqu5kZlKhwqWSULeiAocte4M3BbpggLNqwT7CMwa8waYfQHl7x-2fcICn_DTMi3z7bloSunYpp5JgPzbRFNFxgHXSiSoFg&usqp=CAE'
+                                alt="" />
+                            <div className='absolute inset-0 hover:bg-[#3333] transition duration-300'></div>
+                        </div>
+                    </div>
+
+                    <div className='flex flex-col w-full justify-around'>
+                        <div>
+                            <h1 className='text-[orangeRed]'>Rp 140.000</h1>
+                            <p className='truncate w-full font-semibold'>Baju Distro Pria</p>
+                            <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatibus commodi minima, dolorem vel libero vero. Velit rerum debitis distinctio eligendi.</div>
+                        </div>
+                        <button className='mt-3 bg-[orangeRed] text-white w-[200px] rounded-md hover:bg-orange-700 duration-300 ease-in-out h-[35px]'>Add To Cart</button>
+                    </div>
                 </div>
             </div>
         </div>
     );
-};
+}
 
 export default Coba;

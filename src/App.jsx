@@ -1,7 +1,7 @@
 import React from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { Home, Contact, Login, Register, Reset, NotFound, Admin } from './pages'
-// import { InputToFIrebase, FilterData } from './coba'
+import { InputToFIrebase } from './coba'
 import { Header } from './components'
 import Coba from './coba/Coba'
 
@@ -31,7 +31,7 @@ function App() {
             <Route path='/login' element={<Login />} />
             <Route path='/register' element={<Register />} />
             <Route path='/reset' element={<Reset />} />
-            {/* <Route path='/inputTofirebase' element={<InputToFIrebase />} /> */}
+            <Route path='/inputTofirebase' element={<InputToFIrebase />} />
             {/* <Route path='/filterData' element={<FilterData />} /> */}
 
             <Route path='*' element={<NotFound />} />

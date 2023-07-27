@@ -1,138 +1,251 @@
-import React, { useEffect, useState } from 'react'
-import products from './dataProducts';
+import React, { useContext, useEffect, useState } from 'react'
+import { StateContext } from '../store/stateContext'
+import CardProduct from './Card_Product'
 
 function Coba1() {
 
-    const [data, setData] = useState(products);
-    const [price, setPrice] = useState({ min: 0, max: 0 })
-    const [rangeInput, setInputRange] = useState('');
-    const [type, setType] = useState('all');
-    const [brand, setBrand] = useState('all');
+    const [loading, setLoading] = useState(true); // State untuk indikator loading
 
-    const mappData = () => {
-        setData(products)
-        console.log(products)
+    useEffect(() => {
+        readDataFirebase().then((data) => {
+            setLoading(false); // Set loading ke false setelah data selesai diambil
+            setFilteredData(data);// Set filteredData setelah data diambil
+        })
+    }, [])
+
+    // TANGKAP DATA DARI GLOBAL STATE
+    const { dataProducts, readDataFirebase, maxHarga, setFilterValue } = useContext(StateContext);
+    const [filteredData, setFilteredData] = useState(dataProducts);
+
+    // STATE UNTUK MEMFILTER DATA
+    const [filteredByCategory, setFilterCategory] = useState('');
+    const [filterBrand, setFilterByBrand] = useState('');
+    const [filterName, setFilterName] = useState('');
+
+    // STATE SORTED DATA
+    const [sortedValue, setSortedValue] = useState('');
+
+    // Fungsi untuk melakukan filter berdasarkan kategori
+    const filterByCategory = (type) => {
+        setFilterCategory(type);
+
+        if (type === 'all') {
+            setFilteredData(dataProducts);
+        } else {
+            setFilteredData(dataProducts.filter(item => item.type === type));
+        }
+    };
+
+    // Fungsi untuk melakukan filter berdasarkan merek/brand
+    const filterByBrand = (e) => {
+        const brand = e.target.value;
+        setFilterByBrand(brand);
+
+        if (brand === 'all') {
+            setFilteredData(dataProducts);
+        } else {
+            setFilteredData(dataProducts.filter(item => item.brand === brand));
+        }
+    };
+
+    // Fungsi untuk melakukan filter berdasarkan nama
+    const filterByName = (e) => {
+        const inputName = e.target.value
+        setFilterName(inputName);
+
+        if (inputName.trim() === '') {
+            setFilteredData(dataProducts);
+        } else {
+            setFilteredData(dataProducts.filter(item => item.name.toLowerCase().includes(inputName.toLowerCase())));
+        }
+    };
+
+    // Fungsi untuk melakukan filter berdasarkan range harga
+    const [rangeValue, setRangeValue] = useState('');
+
+    const handleRangeValue = (e) => {
+        const targetValue = parseInt(e.target.value);
+        setRangeValue(targetValue);
+
+        // Filter data berdasarkan harga yang sesuai dengan rangeValue
+        const filteredData = dataProducts.filter(item => item.harga <= targetValue);
+        setFilteredData(filteredData);
+    };
+
+    // Fungsi untuk melakukan sorting berdasarkan harga atau nama
+    const sortBy = (e) => {
+        const sortOption = e.target.value;
+        setSortedValue(sortOption);
+
+        let sortedData = [...filteredData];
+        if (sortOption === 'Lowest Price') {
+            sortedData.sort((a, b) => a.harga - b.harga);
+        } else if (sortOption === 'Highest Price') {
+            sortedData.sort((a, b) => b.harga - a.harga);
+        } else if (sortOption === 'A - Z') {
+            sortedData.sort((a, b) => a.name.localeCompare(b.name));
+        } else if (sortOption === 'Z - A') {
+            sortedData.sort((a, b) => b.name.localeCompare(a.name));
+        }
+        setFilteredData(sortedData);
+    };
+
+    // Fungsi untuk menghapus semua filter dan sorting
+    const handleResetFilter = () => {
+        setFilterCategory('');
+        setFilterByBrand('');
+        setFilterName('');
+        setRangeValue('')
+        setSortedValue('');
+        setFilteredData([...dataProducts]);
+    };
+
+    // PAGINATION 
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10; // Ubah jumlah item yang ditampilkan per halaman di sini
+
+    // Hitung total halaman berdasarkan jumlah item per halaman
+    const totalPages = filteredData ? Math.ceil(filteredData.length / itemsPerPage) : Math.ceil(dataProducts.length / itemsPerPage);
+
+    // Ambil data yang sesuai untuk halaman saat ini
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = filteredData ? filteredData.slice(indexOfFirstItem, indexOfLastItem) : dataProducts.slice(indexOfFirstItem, indexOfLastItem);
+
+    // Mengatur halaman sebelumnya
+    const handlePrevPage = () => {
+        setCurrentPage((prev) => Math.max(prev - 1, 1));
     }
 
-    useEffect(() => {
-        mappData()
-    }, [])
-
-    useEffect(() => {
-        const maxValue = Math.max(...data.map(item => item.harga))
-        const minValue = Math.min(...data.map(item => item.harga))
-        setPrice({ ...price, min: minValue, max: maxValue })
-        // SET INPUT VALUE MENJADI NILAI DARI MAX HARGA
-        setInputRange(maxValue)
-    }, [])
-
-    const handlePriceRange = (e) => {
-        const priceRange = parseInt(e.target.value);
-        // KETIKA DI ONCHANGE MAKA DATA BERUBAH MENJADI VALUE
-        setInputRange(priceRange);
-
-        // Menyimpan data awal ke variabel lokal
-        const initialData = products;
-
-        // Mengambil data yang sesuai dengan harga yang dipilih
-        const filteredByHarga = initialData.filter(item => item.harga <= priceRange);
-
-        // Mengambil data yang sesuai dengan tipe dan brand yang telah dipilih sebelumnya
-        const filteredData = filteredByHarga.filter(item => {
-            if (item.type === type) {
-                return true
-            }
-
-            else if (item.brand === brand) {
-
-            }
-        });
-
-        console.log('FILTER HARGA : ', filteredData)
-
+    // Mengatur halaman selanjutnya
+    const handleNextPage = () => {
+        setCurrentPage((prev) => Math.min(prev + 1, totalPages));
     };
 
-    const handleFilterCategory = (selectedType) => {
-        setType(selectedType);
-
-        // Memfilter data berdasarkan tipe dan harga saat input tipe dipilih
-        const filteredData = products.filter((product) => {
-            if (selectedType === 'all') {
-                // Jika tipe 'All' dipilih, hanya filter berdasarkan harga
-                return product.harga <= rangeInput;
-            } else {
-                // Jika tipe lain dipilih, filter berdasarkan tipe dan harga
-                return product.type === selectedType && product.harga <= rangeInput;
-            }
-        });
-
-        setData(filteredData);
-        console.log('FILTER Category : ', filteredData)
+    // Mengatur halaman tertentu ketika tombol halaman di klik
+    const goToPage = (pageNumber) => {
+        setCurrentPage(pageNumber);
     };
 
-    const handleFilterSelect = (e) => {
-        const selectedBrand = e.target.value;
-        setBrand(selectedBrand);
-
-        // Memfilter data berdasarkan tipe dan harga saat input tipe dipilih
-        const filteredData = products.filter(item => {
-
-            if (selectedBrand === 'all') {
-                return item.brand <= rangeInput;
-            }
-            else {
-                return item.brand === selectedBrand && item.harga <= rangeInput;
-            }
-        })
-        setData(filteredData)
-        console.log('FILTER SELECT : ', filteredData)
-
+    // Generate tombol pagination
+    const renderPaginationButtons = () => {
+        const buttons = [];
+        for (let i = 1; i <= totalPages; i++) {
+            buttons.push(
+                <button
+                    key={i}
+                    onClick={() => goToPage(i)}
+                    className={`bg-blue-500 text-white p-3 mx-1 ${i === currentPage ? 'font-bold' : ''
+                        }`}
+                >
+                    {i}
+                </button>
+            );
+        }
+        return buttons;
     };
+
 
     return (
-        <div className='h-screen w-full flex justify-center items-center'>
-            <div className='flex flex-col'>
+        <div className='mt-32 ml-5'>
 
-                <div className='flex gap-4 my-5'>
-                    <button onClick={() => handleFilterCategory('all')} className='bg-blue-500 text-white p-3'>
-                        All
-                    </button>
-                    <button
-                        onClick={() => handleFilterCategory('laptop')}
-                        className='p-3 bg-blue-500 text-white' >
-                        Laptop
-                    </button>
-                    <button
-                        onClick={() => handleFilterCategory('phone')}
-                        className='p-3 bg-blue-500 text-white'
-                    >Phone
-                    </button>
-                </div>
+            {
+                loading ? <h1>Loading...</h1>
+                    :
+                    (
+                        <>
+                            <div className='flex gap-5'>
+                                <button onClick={() => { filterByCategory('all') }} className='bg-blue-500 text-white p-3'>All</button>
+                                <button onClick={() => { filterByCategory('laptop') }} className='bg-blue-500 text-white p-3'>Laptop</button>
+                                <button onClick={() => { filterByCategory('electronics') }} className='bg-blue-500 text-white p-3'>ELectronics</button>
+                                <button onClick={() => { filterByCategory('fashion') }} className='bg-blue-500 text-white p-3'>Fashion</button>
+                                <button onClick={() => { filterByCategory('phone') }} className='bg-blue-500 text-white p-3'>Phone</button>
+                            </div>
 
-                <div className='my-5'>
-                    <select
-                        value={brand}
-                        onChange={handleFilterSelect}
-                        className='outline-none border-[1px] border-black w-full'
-                    >
-                        <option value='all'>All</option>
-                        <option value="lenovo">Lenovo</option>
-                        <option value="electronics">Electronics</option>
-                    </select>
-                </div>
+                            <div className='flex flex-wrap gap-4 my-5'>
+                                <select value={filterBrand} onChange={filterByBrand}>
+                                    <option value="all">All</option>
+                                    <option value="lenovo">Lenovo</option>
+                                    <option value="samsung">Samsung</option>
+                                    <option value="oppo">Oppo</option>
+                                    <option value="techno">Techno</option>
+                                </select>
+                            </div>
 
-                <h1>{rangeInput || price.min}</h1>
-                <input
-                    value={rangeInput}
-                    min={price.min}
-                    max={price.max}
-                    type="range"
-                    onChange={handlePriceRange}
-                />
+                            <div className='flex flex-wrap gap-4 my-5'>
+                                <select value={sortedValue} onChange={sortBy}>
+                                    <option value="">latest</option>
+                                    <option value="Lowest Price">Lowest Price</option>
+                                    <option value="Highest Price">Highest Price</option>
+                                    <option value="A - Z">A - Z</option>
+                                    <option value="Z - A">Z - A</option>
+                                </select>
+                            </div>
 
-            </div>
+                            <div>
+                                <input
+                                    value={filterName}
+                                    onChange={filterByName}
+                                    type="text"
+                                    className='border-[1px] border-black outline-none p-3'
+                                />
+                            </div>
+
+                            <div className='my-5'>
+                                <div>{rangeValue}</div>
+                                <input
+                                    value={rangeValue}
+                                    min={Math.min(...dataProducts.map(item => item.harga))}
+                                    max={Math.max(...dataProducts.map(item => item.harga))}
+                                    onChange={handleRangeValue}
+                                    type="range"
+                                />
+                            </div>
+
+                            <button
+                                onClick={handleResetFilter}
+                                className='bg-red-500 text-white p-3'>Clear Filters</button>
+
+                            <div className='mt-5'>
+                                <div className='flex flex-wrap gap-5'>
+                                    {
+                                        currentItems.length === 0 ? <h1>DATA TIDAK DITEMUKAN</h1> :
+                                            currentItems.map((item, index) => (
+                                                <CardProduct
+                                                    key={index}
+                                                    name={item.name}
+                                                    brand={item.brand}
+                                                    type={item.type}
+                                                    harga={item.harga}
+                                                />
+                                            ))
+                                    }
+                                </div>
+
+                                {/* Pagination */}
+                                <div className='my-5'>
+                                    <button
+                                        onClick={handlePrevPage}
+                                        disabled={currentPage === 1}
+                                        className='bg-blue-500 text-white p-3'
+                                    >
+                                        Prev
+                                    </button>
+                                    {renderPaginationButtons()}
+                                    <button
+                                        onClick={handleNextPage}
+                                        disabled={currentPage === totalPages}
+                                        className='bg-blue-500 text-white p-3'
+                                    >
+                                        Next
+                                    </button>
+                                </div>
+                            </div>
+                        </>
+                    )
+            }
         </div>
-    );
+    )
 }
 
-export default Coba1;
+export default Coba1

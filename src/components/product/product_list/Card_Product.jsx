@@ -1,8 +1,11 @@
-import React from 'react'
-
+import React, { useContext } from 'react'
 import { Link } from 'react-router-dom'
+import { StateContext } from '../../../store/stateContext';
 
-function Card_Product({ price, src, name }) {
+function Card_Product({ price, src, name, description }) {
+
+    const { styleGrid, styleFlex } = useContext(StateContext)
+
 
     const formatToRupiah = (value) => {
         const formatter = new Intl.NumberFormat('id-ID', {
@@ -15,22 +18,25 @@ function Card_Product({ price, src, name }) {
     };
 
     return (
-        <div className='shadow-md p-4 w-[230px] h-max '>
-
-            <Link>
+        <div
+            className={`shadow-md ${styleGrid ? "p-4 w-[230px] h-max" : styleFlex ? "w-[750px] flex p-2 gap-8" : ""} `}>
+            <div>
                 <div className='relative'>
                     <img
-                        className='object-cover h-[220px] w-full'
+                        className={`object-cover ${styleGrid ? "h-[220px] w-full" : styleFlex ? "h-[250px] w-[350px]" : ""}`}
                         src={src}
-                        alt="" />
+                        alt={name} />
                     <div className='absolute inset-0 hover:bg-[#3333] transition duration-300'></div>
                 </div>
-            </Link>
+            </div>
 
-            <div className='mt-6 flex flex-col gap-0.5 items-center w-full'>
-                <h1 className='text-[orangeRed]'>Rp {formatToRupiah(price)}</h1>
-                <p className='truncate w-full'>{name}</p>
-                <button className='mt-3 bg-[orangeRed] text-white w-full rounded-md hover:bg-orange-700 duration-300 ease-in-out h-[35px]'>Add To Cart</button>
+            <div className={`${styleGrid ? "mt-6 flex flex-col gap-0.5 items-center w-full" : styleFlex ? "flex flex-col w-full justify-around" : ""}`}>
+                <div className={`${styleGrid ? "flex flex-col w-full text-center" : styleFlex ? "" : ""}`}>
+                    <h1 className='text-[orangeRed]'>Rp {price}</h1>
+                    <p className='truncate w-full font-semibold'>{name}</p>
+                    <div className={`${styleGrid ? "hidden" : styleFlex ? "block" : ""}`}>{description}</div>
+                </div>
+                <button className={`mt-3 bg-[orangeRed] text-white ${styleGrid ? "w-full" : styleFlex ? "w-[200px]" : ""} rounded-md hover:bg-orange-700 duration-300 ease-in-out h-[35px]`}>Add To Cart</button>
             </div>
         </div>
 
