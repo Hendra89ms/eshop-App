@@ -2,9 +2,9 @@ import React, { useContext } from 'react'
 import { Link } from 'react-router-dom'
 import { StateContext } from '../../../store/stateContext';
 
-function Card_Product({ id, price, src, name, description }) {
+function Card_Product({ id, price, src, name, description, oneId }) {
 
-    const { styleGrid, styleFlex } = useContext(StateContext)
+    const { styleGrid, styleFlex, addDataById } = useContext(StateContext)
 
 
     const formatToRupiah = (value) => {
@@ -36,7 +36,9 @@ function Card_Product({ id, price, src, name, description }) {
                     <p className='truncate w-full font-semibold'>{name}</p>
                     <div className={`${styleGrid ? "hidden" : styleFlex ? "block" : ""}`}>{description}</div>
                 </div>
-                <button className={`mt-3 bg-[orangeRed] text-white ${styleGrid ? "w-full" : styleFlex ? "w-[200px]" : ""} rounded-md hover:bg-orange-700 duration-300 ease-in-out h-[35px]`}>Add To Cart</button>
+                <button
+                    onClick={() => { addDataById(oneId) }}
+                    className={`mt-3 bg-[orangeRed] text-white ${styleGrid ? "w-full" : styleFlex ? "w-[200px]" : ""} rounded-md hover:bg-orange-700 duration-300 ease-in-out h-[35px]`}>Add To Cart</button>
             </div>
         </div>
 

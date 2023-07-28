@@ -11,7 +11,7 @@ function NavMiddle({ activeLink }) {
                 <li className='hover:text-[#ff7722] duration-300'>
                     <NavLink
                         to='/'
-                        className={!['/contact', '/register', '/login'].includes(location.pathname) && activeLink}>
+                        className={location.pathname === "/" && activeLink}>
                         Home
                     </NavLink>
                 </li>

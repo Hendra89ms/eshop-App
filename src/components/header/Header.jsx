@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { NavLink, Link, useNavigate, useLocation } from 'react-router-dom'
 import { FaShoppingCart } from 'react-icons/fa'
 import { HiOutlineMenuAlt3 } from 'react-icons/hi'
 import ResponsiveMenu from './ResponsiveMenu'
-import { auth } from '../../firebase_config'
 import { signOut, onAuthStateChanged, getAuth } from 'firebase/auth'
 import { toast } from 'react-toastify'
 import { Loader } from '../loader'
 import NavMiddle from './NavMiddle'
 import NavRight from './NavRight'
+import { StateContext } from '../../store/stateContext'
 
 
 function Header() {
@@ -22,8 +22,6 @@ function Header() {
         // MEMONITOR PENGGUNA YANG LOGIN SAAT INI
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                // const uid = user.uid;
-                // console.log(user)
 
                 if (user.displayName === null) {
                     // const u1 = user.email.substring(0, user.email.indexOf('@'));
@@ -71,6 +69,9 @@ function Header() {
         });
     }
 
+    const { cartData } = useContext(StateContext)
+
+    console.log(cartData.length)
 
     return (
         <>
@@ -99,13 +100,13 @@ function Header() {
                                     <>
                                         <NavLink
                                             to='/login'
-                                            className={location.pathname == "/login" && activeLink}>
+                                            className={location.pathname === "/login" && activeLink}>
                                             <h1 className='hover:text-[#ff7722] cursor-pointer  duration-300'>Login</h1>
                                         </NavLink>
 
                                         <NavLink
                                             to='/register'
-                                            className={location.pathname == "/register" && activeLink}>
+                                            className={location.pathname === "/register" && activeLink}>
                                             <h1 className='hover:text-[#ff7722] cursor-pointer duration-300'>Register</h1>
                                         </NavLink>
                                     </>
@@ -115,13 +116,15 @@ function Header() {
 
 
                         <div className='flex items-center gap-5 ml-4 '>
-                            <NavLink to='/cart' className={({ isActive }) => isActive ? 'text-[#ff7722]' : ''}>
+                            <NavLink to='/cart' className={location.pathname === "/cart" && activeLink}>
                                 <h1 className=' cursor-pointer duration-300 md:flex hidden'>
                                     <div className='flex items-center hover:text-[#ff7722] '>
                                         <span className=''>Cart</span>
                                         <div className='relative '>
                                             <FaShoppingCart fontSize={20} />
-                                            <span className='absolute top-[-10px] right-[-10px] text-orange-500 font-bold'>0</span>
+
+                                            <span className='absolute top-[-10px] right-[-10px] text-orange-500 font-bold'>{cartData.length}</span>
+
                                         </div>
                                     </div>
                                 </h1>

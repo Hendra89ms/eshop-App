@@ -25,6 +25,7 @@ function Product_list() {
                                             price={item.harga}
                                             name={item.name}
                                             description={item.description}
+                                            oneId={item.id}
                                         />
                                     )
                                 })

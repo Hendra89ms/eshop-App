@@ -37,7 +37,6 @@ export const StateProvider = ({ children }) => {
         })
     }, [])
 
-
     const readDataFirebase = async () => {
         try {
             const response = await readData();
@@ -191,8 +190,50 @@ export const StateProvider = ({ children }) => {
         setStyleFlex(true)
     }
 
+    // UNTUK CART MENGAMBIL SATU DATA SAJA ++
+    const [cartData, setCartData] = useState([])
+
+    // FUNCTION UNTUK MENAMBAHKAN SATU DATA SAJA
+    const addDataById = (id) => {
+        const newData = dataProducts.find(item => item.id === id);
+
+        // CARI INDEX NYA DARI DATA YANG SUDAH DITAMBAHKAN KECART 
+        const existingDataIndex = cartData.findIndex(item => item.id === id)
+
+        if (existingDataIndex !== -1) {
+            // If data exists, update its value
+            setCartData(prevMappedData => {
+                const updatedCartData = [...prevMappedData];
+                updatedCartData[existingDataIndex].quantity += 1;
+                updatedCartData[existingDataIndex].total = updatedCartData[existingDataIndex].harga * updatedCartData[existingDataIndex].quantity;
+                return updatedCartData;
+            });
+        } else {
+            // If data doesn't exist, add it to mappedData
+            setCartData(prevCartData => [...prevCartData, { ...newData, quantity: 1, total: newData.harga }]);
+        }
+    };
+
+    // FORMAT RUPIAH
+    const formatToRupiah = (value) => {
+        const formatter = new Intl.NumberFormat('id-ID', {
+            style: 'currency',
+            currency: 'IDR',
+            minimumFractionDigits: 0,
+        });
+        const formattedValue = formatter.format(value);
+        return formattedValue.replace('Rp', '');
+    };
+
+
+
     return (
         <StateContext.Provider value={{
+            // function FORMAT RUPIAH
+            formatToRupiah,
+            // GET ONE DATA 
+            addDataById,
+            cartData,
             // Data Hasil Filter Yang Mau Dimapping
             currentItems,
             // All Data
