@@ -71,8 +71,6 @@ function Header() {
 
     const { cartData } = useContext(StateContext)
 
-    console.log(cartData.length)
-
     return (
         <>
             {isLoading && <Loader />}

@@ -1,5 +1,7 @@
 import React, { createContext, useEffect, useState } from "react";
 import { readData } from '../service/service_firebase'
+import { toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css';
 
 // buat context global
 export const StateContext = createContext()
@@ -212,6 +214,7 @@ export const StateProvider = ({ children }) => {
             // If data doesn't exist, add it to mappedData
             setCartData(prevCartData => [...prevCartData, { ...newData, quantity: 1, total: newData.harga }]);
         }
+        toast.success(`Add ${newData.name} to Cart Success...`)
     };
 
     // FORMAT RUPIAH

@@ -1,52 +1,30 @@
-import React, { useState } from 'react';
-
-const initialData = [
-    { id: 1, value: 0 },
-    { id: 2, value: 0 },
-    { id: 3, value: 0 }
-];
+import React, { useState, useEffect } from 'react';
 
 function Coba1() {
-    const [data, setData] = useState(initialData);
-    const [mappedData, setMappedData] = useState([]);
+    const [data, setData] = useState([
+        { id: 1, name: 'Product A', price: 10, quantity: 2, total: 20 },
+        { id: 2, name: 'Product B', price: 15, quantity: 3, total: 45 },
+        { id: 3, name: 'Product C', price: 20, quantity: 1, total: 20 }
+    ]);
 
-    const addDataById = (id) => {
-        const newData = data.find(item => item.id === id);
-        const existingDataIndex = mappedData.findIndex(item => item.id === id);
+    const [overallTotal, setOverallTotal] = useState(0);
 
-        if (existingDataIndex !== -1) {
-            // If data exists, update its value
-            setMappedData(prevMappedData => {
-                const updatedMappedData = [...prevMappedData];
-                updatedMappedData[existingDataIndex].value += 1;
-                return updatedMappedData;
-            });
-        } else {
-            // If data doesn't exist, add it to mappedData
-            setMappedData(prevMappedData => [...prevMappedData, { ...newData }]);
-        }
-    };
+    const total = data.reduce((acc, item) => acc + item.total, 0);
+    console.log('total : ', total)
+    // setOverallTotal(total)
 
+    // useEffect(() => {
+    //     // Calculate the overall total by summing up 'total' from each item
+
+    //     setOverallTotal(total);
+    // }, [data]);
 
     return (
-        <div className="mt-32 ml-10">
-            <div id="data-container">
-                {data.map(item => (
-                    <div key={item.id}>
-                        <p>ID: {item.id}, Value: {item.value}</p>
-                        <button onClick={() => addDataById(item.id)}>Tambah Data</button>
-                    </div>
-                ))}
-            </div>
-            <div className='mt-5'>
-                <h2>Data yang Dimap</h2>
-                {mappedData.map(item => (
-                    <div key={item.id}>
-                        <p>ID: {item.id}, Value: {item.value}</p>
-                    </div>
-                ))}
-            </div>
+        <div className='mt-32'>
+            {/* Display overallTotal wherever you need it in your component */}
+            <p>Overall Total: {total}</p>
         </div>
     );
 }
+
 export default Coba1;
