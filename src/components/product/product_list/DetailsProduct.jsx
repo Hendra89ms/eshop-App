@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { detailData } from '../../../service/service_firebase'
 import { BsArrowLeft } from 'react-icons/bs'
 import { Loader } from '../../loader'
+import { StateContext } from '../../../store/stateContext'
 
 function DetailsProduct() {
 
@@ -26,10 +27,10 @@ function DetailsProduct() {
         }
     }
 
+    const { addDataById } = useContext(StateContext)
+
     return (
         <div className='mt-28'>
-            {/* <h1>DETAIL PRODUCT Params : {id}</h1> */}
-
             {
                 loading ? <Loader /> :
                     (
@@ -70,7 +71,13 @@ function DetailsProduct() {
                                             <p>1</p>
                                             <button className='bg-slate-200 hover:bg-slate-300 duration-300 px-3 py-1.5'> + </button>
                                         </div>
-                                        <button className='w-[150px] bg-orange-500 hover:bg-orange-700 duration-300 text-white p-2 rounded-md mt-5'>ADD TO CART</button>
+                                        <Link
+                                            to='/cart'
+                                        >
+                                            <button className='w-[150px] bg-orange-500 hover:bg-orange-700 duration-300 text-white p-2 rounded-md mt-5'>
+                                                ADD TO CART
+                                            </button>
+                                        </Link>
                                     </div>
                                 </div>
                             </div>
