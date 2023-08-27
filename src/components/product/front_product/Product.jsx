@@ -50,7 +50,7 @@ function Product() {
             {
                 loading ? <h1>Loading...</h1> :
                     (
-                        <div id='products' className='w-full md:w-[1000px] mx-auto flex my-20 h-max'>
+                        <div className='w-full md:w-[1000px] mx-auto flex my-20 h-max'>
                             <div className='flex-[0.2] '>
                                 {/* LEFT CONTAINER */}
                                 <aside >
@@ -145,10 +145,12 @@ function Product() {
 
                             </div>
                             <div className=' flex-col flex-[0.9] flex ml-10 '>
+
                                 <RightTable />
 
+
                                 {/* PRODUCT LISTS */}
-                                <div className='' >
+                                <div className=''  >
                                     <Product_list />
 
                                 </div>

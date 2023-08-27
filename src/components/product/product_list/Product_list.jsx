@@ -43,7 +43,7 @@ function Product_list() {
                             onClick={handlePrevPage}>Back
                         </button>
 
-                        {/* <div className='px-3 cursor-pointer border-[1px] border-gray-400'>2</div> */}
+
                         <div> {renderPaginationButtons()}</div>
                         <button
                             className='px-3 cursor-pointer'

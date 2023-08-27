@@ -23,7 +23,9 @@ function Home() {
         <div className="w-full mt-20">
             <Slider />
 
-            <Product />
+            <div id="products">
+                <Product />
+            </div>
             <div>
                 <Footer />
             </div>
